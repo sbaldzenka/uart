@@ -55,8 +55,11 @@ architecture rtl of uart_tb is
     signal transmission   : std_logic;
     signal word_gen_pulse : std_logic;
     signal word_gen       : std_logic_vector(7 downto 0);
+
     signal data_tx        : std_logic_vector(7 downto 0);
     signal data_rx        : std_logic_vector(7 downto 0);
+    signal data_tx_int    : integer;
+    signal data_rx_int    : integer;
 
 begin
 
@@ -96,11 +99,13 @@ begin
 
     TRANSMISSION_FLAG_GENERATE: process
     begin
+        report "------------------------------------------------- START SIMULATION.";
         transmission <= '0';
         wait for 200 us;
         transmission <= '1';
         wait for 700 us;
         transmission <= '0';
+        report "------------------------------------------------- FINISH SIMULATION.";
         wait;
     end process;
 
@@ -111,16 +116,12 @@ begin
                 word_gen_pulse <= '0';
                 s_axis_data    <= (others => '0');
                 word_gen       <= (others => '0');
-            elsif (s_axis_ready = '1' and transmission = '1') then
+            elsif (s_axis_ready = '1' and transmission = '1' and (word_gen = x"00" or m_axis_valid = '1')) then
                 word_gen       <= word_gen + '1';
                 word_gen_pulse <= '1';
                 s_axis_data    <= word_gen;
             else
                 word_gen_pulse <= '0';
-            end if;
-
-            if (word_gen_pulse = '1' and s_axis_ready = '0') then
-                word_gen <= word_gen - '1';
             end if;
         end if;
     end process;
@@ -128,7 +129,7 @@ begin
     rx           <= tx;
     s_axis_valid <= s_axis_ready and word_gen_pulse;
 
-    DATA_COMP: process(clk)
+    DATA_VECTOR_TO_INT: process(clk)
     begin
         if rising_edge(clk) then
             if (reset = '1') then
@@ -144,5 +145,23 @@ begin
             end if;
         end if;
     end process;
+
+    data_tx_int <= conv_integer(data_tx);
+    data_rx_int <= conv_integer(data_rx);
+
+    DATA_COMP: process(word_gen_pulse)
+    begin
+        if falling_edge (word_gen_pulse) then
+            report ">>>> DATA TX:" & integer'image(data_tx_int);
+            report ">>>> DATA RX:" & integer'image(data_rx_int);
+
+            if (data_tx_int = data_rx_int) then
+                report "------------------------------------------------- DATA PASSED.";
+            else
+                report "------------------------------------------------- DATA ERROR!";
+            end if;
+        end if;
+    end process;
+
 
 end rtl;
