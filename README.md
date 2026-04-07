@@ -3,10 +3,9 @@
 UART IP-core for FPGA projects.
 
 Folders:
-- **uart_vhdl** - uart on vhdl.
-
-|- **hdl** - vhdl files.
-|- **sim** - script files for modelsim/questasim.
+- **uart_vhdl** - uart on vhdl;
+|- **hdl** - vhdl files;
+|- **sim** - script files for modelsim/questasim;
 |- **tb** - testbench.
 
 To set the UART baudrate, you must specify COEFF_BAUDRATE in the top project file (**uart.vhd**).
