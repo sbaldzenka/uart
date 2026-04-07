@@ -14,7 +14,7 @@ use ieee.std_logic_unsigned.all;
 entity uart_tb is
 generic
 (
-    COEFF_BAUDRATE : std_logic_vector(15 downto 0):= x"0036"
+    COEFF_BAUDRATE : std_logic_vector(15 downto 0) := x"0036"
 );
 end uart_tb;
 
@@ -55,7 +55,6 @@ architecture rtl of uart_tb is
     signal transmission   : std_logic;
     signal word_gen_pulse : std_logic;
     signal word_gen       : std_logic_vector(7 downto 0);
-
     signal data_tx        : std_logic_vector(7 downto 0);
     signal data_rx        : std_logic_vector(7 downto 0);
     signal data_tx_int    : integer;

@@ -14,7 +14,7 @@ use ieee.std_logic_unsigned.all;
 entity uart is
 generic
 (
-    COEFF_BAUDRATE : std_logic_vector(15 downto 0)
+    COEFF_BAUDRATE : std_logic_vector(15 downto 0) := x"0036"
 );
 port
 (

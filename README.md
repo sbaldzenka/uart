@@ -1,13 +1,15 @@
-# uart_core
+# uart
 
-VHDL UART IP-Core for FPGA projects.
+UART IP-core for FPGA projects.
+
+Folders:
+- **uart_vhdl** - uart on vhdl.
 
 Description of projects:
 - **hdl** - VHDL files.
 - **sim** - script files for modelsim/questasim.
 - **tb** - testbench.
-- **uart_test** - example project for Lattice MachXO3 Starter Kit.
 
-To set the UART baudrate, you must specify COEFF_BAUDRATE in the top project file.
-### COEFF_BAUDRATE = aclk/baudrate.
+To set the UART baudrate, you must specify COEFF_BAUDRATE in the top project file (**uart.vhd**).
+### COEFF_BAUDRATE = i_clk/uart_baudrate.
 > For example COEFF_BAUDRATE = 50000000 Hz / 9600 = 5208 dec = 1458 hex
