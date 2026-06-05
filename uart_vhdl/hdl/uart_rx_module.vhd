@@ -1,8 +1,9 @@
 -- project     : uart_vhdl
 -- date        : 16.01.2020
+-- version     : 1.0
 -- author      : siarhei baldzenka
 -- e-mail      : sbaldzenka@proton.me
--- description : https://github.com/sbaldzenka/uart/uart_vhdl
+-- description : https://github.com/sbaldzenka/uart
 --               COEFF_BAUDRATE = Fclk/Fuart
 
 library ieee;

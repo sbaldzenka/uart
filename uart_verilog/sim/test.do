@@ -3,7 +3,7 @@
 -- data        : 04.06.2026
 -- author      : siarhei baldzenka
 -- e-mail      : sbaldzenka@proton.me
--- description : https://github.com/sbaldzenka/uart/uart_verilog
+-- description : https://github.com/sbaldzenka/uart
 
 vlib work
 vmap work work
