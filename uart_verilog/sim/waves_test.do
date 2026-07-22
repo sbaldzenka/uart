@@ -1,5 +1,5 @@
 -- project     : uart_verilog
--- version     : 1.0
+-- version     : 1.1
 -- data        : 04.06.2026
 -- author      : siarhei baldzenka
 -- e-mail      : sbaldzenka@proton.me

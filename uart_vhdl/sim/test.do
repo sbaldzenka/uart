@@ -1,6 +1,6 @@
 -- project     : uart_vhdl
 -- date        : 16.01.2020
--- version     : 1.0
+-- version     : 1.1
 -- author      : siarhei baldzenka
 -- e-mail      : sbaldzenka@proton.me
 -- description : https://github.com/sbaldzenka/uart
