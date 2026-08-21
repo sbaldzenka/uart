@@ -24,19 +24,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 ---------------------------------------------------------------------------------------
 
-project     : uart_verilog
-version     : 1.1
+project     : axis_uart_verilog
+version     : 1.2
 data        : 04.06.2026
 author      : siarhei baldzenka
 e-mail      : sbaldzenka@proton.me
-description : https://github.com/sbaldzenka/uart
+description : https://github.com/sbaldzenka/axis_uart
 
 ---------------------------------------------------------------------------------------
 */
 
 `timescale 1ns/100ps
 
-module rx_ctrl
+module tx_ctrl
 #(
     parameter COEFF_BAUDRATE = 16'h0036
 )
@@ -44,34 +44,37 @@ module rx_ctrl
     // system signals
     input  wire       i_clk,
     input  wire       i_reset,
-    // data out bus
-    output reg        o_valid,
-    output reg  [7:0] o_data,
+    // data in bus
+    input  wire       i_valid,
+    input  wire [7:0] i_data,
+    output wire       o_ready,
     // uart interface
-    input  wire       i_rx
+    output reg        o_tx
 );
 
     // local parameters
     localparam [3:0] S_IDLE      = 0,
                      S_START     = 1,
-                     S_TAKE_BIT0 = 2,
-                     S_TAKE_BIT1 = 3,
-                     S_TAKE_BIT2 = 4,
-                     S_TAKE_BIT3 = 5,
-                     S_TAKE_BIT4 = 6,
-                     S_TAKE_BIT5 = 7,
-                     S_TAKE_BIT6 = 8,
-                     S_TAKE_BIT7 = 9,
+                     S_SEND_BIT0 = 2,
+                     S_SEND_BIT1 = 3,
+                     S_SEND_BIT2 = 4,
+                     S_SEND_BIT3 = 5,
+                     S_SEND_BIT4 = 6,
+                     S_SEND_BIT5 = 7,
+                     S_SEND_BIT6 = 8,
+                     S_SEND_BIT7 = 9,
                      S_STOP      = 10;
 
     // signals
     reg        bit_done;
-    reg        bit_capture;
     reg [15:0] baud_counter;
+    reg [ 7:0] buffer;
     reg [ 7:0] shift_reg;
     reg [ 3:0] state;
 
     // logic
+    assign o_ready = (state == S_IDLE) ? 1'b1 : 1'b0;
+
     always @(posedge i_clk) begin
         if (baud_counter == COEFF_BAUDRATE-1'b1) begin
             bit_done <= 1'b1;
@@ -93,30 +96,30 @@ module rx_ctrl
     end
 
     always @(posedge i_clk) begin
-        if (state == S_START || state == S_STOP) begin
-            bit_capture <= 1'b0;
-        end else begin
-            bit_capture <= 1'b0;
+        if (i_valid && o_ready) begin
+            buffer <= i_data;
+        end
+    end
 
-            if (baud_counter == {1'b0, COEFF_BAUDRATE[15:1]}) begin
-                bit_capture <= 1'b1;
+    always @(posedge i_clk) begin
+        if (bit_done) begin
+            if (state == S_START) begin
+                shift_reg <= buffer;
+            end else begin
+                shift_reg <= {1'b1, shift_reg[7:1]};
             end
         end
     end
 
     always @(posedge i_clk) begin
-        if (bit_capture) begin
-            shift_reg <= {i_rx, shift_reg[7:1]};
-        end
-    end
-
-    always @(posedge i_clk) begin
-        if (state == S_STOP && bit_done) begin
-            o_valid <= 1'b1;
-            o_data  <= shift_reg;
+        if (state == S_IDLE) begin
+            o_tx <= 1'b1;
+        end else if (state == S_START) begin
+            o_tx <= 1'b0;
+        end else if (state == S_STOP) begin
+            o_tx <= 1'b1;
         end else begin
-            o_valid <= 1'b0;
-            o_data  <= 'b0;
+            o_tx <= shift_reg[0];
         end
     end
 
@@ -126,60 +129,60 @@ module rx_ctrl
         end else begin
             case (state)
                 S_IDLE: begin
-                    if (!i_rx) begin
+                    if (i_valid) begin
                         state <= S_START;
                     end
                 end
 
                 S_START: begin
                     if (bit_done) begin
-                        state <= S_TAKE_BIT0;
+                        state <= S_SEND_BIT0;
                     end
                 end
 
-                S_TAKE_BIT0: begin
+                S_SEND_BIT0: begin
                     if (bit_done) begin
-                        state <= S_TAKE_BIT1;
+                        state <= S_SEND_BIT1;
                     end
                 end
 
-                S_TAKE_BIT1: begin
+                S_SEND_BIT1: begin
                     if (bit_done) begin
-                        state <= S_TAKE_BIT2;
+                        state <= S_SEND_BIT2;
                     end
                 end
 
-                S_TAKE_BIT2: begin
+                S_SEND_BIT2: begin
                     if (bit_done) begin
-                        state <= S_TAKE_BIT3;
+                        state <= S_SEND_BIT3;
                     end
                 end
 
-                S_TAKE_BIT3: begin
+                S_SEND_BIT3: begin
                     if (bit_done) begin
-                        state <= S_TAKE_BIT4;
+                        state <= S_SEND_BIT4;
                     end
                 end
 
-                S_TAKE_BIT4: begin
+                S_SEND_BIT4: begin
                     if (bit_done) begin
-                        state <= S_TAKE_BIT5;
+                        state <= S_SEND_BIT5;
                     end
                 end
 
-                S_TAKE_BIT5: begin
+                S_SEND_BIT5: begin
                     if (bit_done) begin
-                        state <= S_TAKE_BIT6;
+                        state <= S_SEND_BIT6;
                     end
                 end
 
-                S_TAKE_BIT6: begin
+                S_SEND_BIT6: begin
                     if (bit_done) begin
-                        state <= S_TAKE_BIT7;
+                        state <= S_SEND_BIT7;
                     end
                 end
 
-                S_TAKE_BIT7: begin
+                S_SEND_BIT7: begin
                     if (bit_done) begin
                         state <= S_STOP;
                     end

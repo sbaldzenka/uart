@@ -23,12 +23,12 @@
 --
 -- ---------------------------------------------------------------------------------------
 --
--- project     : uart_vhdl
+-- project     : axis_uart_vhdl
 -- date        : 16.01.2020
--- version     : 1.1
+-- version     : 1.2
 -- author      : siarhei baldzenka
 -- e-mail      : sbaldzenka@proton.me
--- description : https://github.com/sbaldzenka/uart
+-- description : https://github.com/sbaldzenka/axis_uart
 --               COEFF_BAUDRATE = Fclk/Fuart
 --
 ---------------------------------------------------------------------------------------
@@ -36,10 +36,10 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
-use ieee.numeric_std.all;
 use ieee.std_logic_unsigned.all;
+use ieee.numeric_std.all;
 
-entity uart is
+entity axis_uart is
 generic
 (
     COEFF_BAUDRATE : std_logic_vector(15 downto 0) := x"0036"
@@ -60,11 +60,11 @@ port
     o_tx           : out std_logic;
     i_rx           : in  std_logic
 );
-end uart;
+end axis_uart;
 
-architecture rtl of uart is
+architecture rtl of axis_uart is
 
-    component uart_tx_module is
+    component tx_manager is
     generic
     (
         COEFF_BAUDRATE : std_logic_vector(15 downto 0)
@@ -80,7 +80,7 @@ architecture rtl of uart is
     );
     end component;
 
-    component uart_rx_module is
+    component rx_manager is
     generic
     (
         COEFF_BAUDRATE : std_logic_vector(15 downto 0)
@@ -97,7 +97,7 @@ architecture rtl of uart is
 
 begin
 
-    uart_tx_module_inst: uart_tx_module
+    tx_manager_inst: tx_manager
     generic map
     (
         COEFF_BAUDRATE => COEFF_BAUDRATE
@@ -112,7 +112,7 @@ begin
         o_tx    => o_tx
     );
 
-    uart_rx_module_inst: uart_rx_module
+    rx_manager_inst: rx_manager
     generic map
     (
         COEFF_BAUDRATE => COEFF_BAUDRATE

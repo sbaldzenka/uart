@@ -24,12 +24,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 ---------------------------------------------------------------------------------------
 
-project     : uart_verilog
-version     : 1.1
+project     : axis_uart_verilog
+version     : 1.2
 data        : 04.06.2026
 author      : siarhei baldzenka
 e-mail      : sbaldzenka@proton.me
-description : https://github.com/sbaldzenka/uart
+description : https://github.com/sbaldzenka/axis_uart
 
 ---------------------------------------------------------------------------------------
 */
@@ -38,7 +38,7 @@ description : https://github.com/sbaldzenka/uart
 
 `include "uart_test_param.vh"
 
-module uart_tb
+module axis_uart_tb
 #(
     // simulation parameters
     parameter PERIOD_CLK     = `PERIOD_CLK,
@@ -135,7 +135,7 @@ module uart_tb
         end
     end
 
-    uart
+    axis_uart
     #(
         .COEFF_BAUDRATE ( COEFF_BAUDRATE )
     )

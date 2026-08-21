@@ -23,12 +23,12 @@
 --
 -- ---------------------------------------------------------------------------------------
 --
--- project     : uart_vhdl
+-- project     : axis_uart_vhdl
 -- date        : 16.01.2020
--- version     : 1.1
+-- version     : 1.2
 -- author      : siarhei baldzenka
 -- e-mail      : sbaldzenka@proton.me
--- description : https://github.com/sbaldzenka/uart
+-- description : https://github.com/sbaldzenka/axis_uart
 --               COEFF_BAUDRATE = Fclk/Fuart
 --
 ---------------------------------------------------------------------------------------
@@ -36,19 +36,19 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
-use ieee.numeric_std.all;
 use ieee.std_logic_unsigned.all;
+use ieee.numeric_std.all;
 
-entity uart_tb is
+entity axis_uart_tb is
 generic
 (
     COEFF_BAUDRATE : std_logic_vector(15 downto 0) := x"0036"
 );
-end uart_tb;
+end axis_uart_tb;
 
-architecture rtl of uart_tb is
+architecture rtl of axis_uart_tb is
 
-    component uart
+    component axis_uart
     generic
     (
         COEFF_BAUDRATE : std_logic_vector(15 downto 0)
@@ -90,7 +90,7 @@ architecture rtl of uart_tb is
 
 begin
 
-    DUT_inst: uart
+    DUT_inst: axis_uart
     generic map
     (
         COEFF_BAUDRATE => COEFF_BAUDRATE
